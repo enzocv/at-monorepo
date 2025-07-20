@@ -1,0 +1,65 @@
+version: "3.8"
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: bk_at_prueba_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: bk_at_prueba
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./bk-at-prueba  # <-- ajusta según tu estructura real
+      dockerfile: Dockerfile
+    container_name: bk_at_prueba_api
+    environment:
+      - DATABASE_HOST=postgres
+      - DATABASE_PORT=5432
+      - DATABASE_USER=postgres
+      - DATABASE_PASSWORD=postgres
+      - DATABASE_NAME=bk_at_prueba
+      - NODE_ENV=development
+      - JWT_SECRET=tu_secreto_super_secreto
+      - FRONTEND_URL=http://localhost:5173
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./bk-at-prueba:/app  # <-- ajusta según tu estructura real
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - app-network
+    command: sh -c "npm run seed:run && npm run start:dev"
+
+  frontend:
+    build:
+      context: ./at-prueba  # <-- ajusta según tu estructura real
+      dockerfile: Dockerfile
+    container_name: at_prueba_frontend
+    ports:
+      - "5173:80"
+    environment:
+      - VITE_API_URL=http://backend:3000  # backend es el nombre del servicio
+    networks:
+      - app-network
+
+volumes:
+  postgres_data:
+
+networks:
+  app-network:
+    driver: bridge
