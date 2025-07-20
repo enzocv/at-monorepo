@@ -1,0 +1,18 @@
+version: "3.8"
+
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: at_prueba_frontend
+    ports:
+      # - "8080:80"
+      - "5173:80"
+    environment:
+      - VITE_API_URL=http://localhost:3000
+    networks:
+      - app-network
+
+networks:
+  app-network:
