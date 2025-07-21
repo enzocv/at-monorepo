@@ -20,12 +20,12 @@ Este repositorio contiene dos proyectos principales:
 ### 1. Clonar el repositorio
 
 ```bash
-git clone https://github.com/tu-usuario/at-monorepo.git
+git clone https://github.com/enzocv/at-monorepo.git
 cd at-monorepo
 ```
 
 ---
-### 2. Clonar el repositorio
+### 2. Instalar dependencias de los repositorios
 
 ```bash
 cd at-prueba && npm install
